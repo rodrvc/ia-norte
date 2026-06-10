@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA NORTE — Wireframes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF7F0;
+    --ink:#2b2b2b;
+    --ink-soft:#6b6258;
+    --line:#3a3a3a;
+    --bar:#d8cfc0;
+    --bar-dark:#c3b8a4;
+    --gold:#D9A441;
+    --brown:#B07B4F;
+    --navy:#1F2A38;
+    --blue:#4C6EF5;
+    --box:#ece6da;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#e8e1d4;
+    color:var(--ink);
+    font-family:'Patrick Hand', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    position:sticky;top:0;z-index:50;
+    background:#fffdf8;
+    border-bottom:2px solid var(--ink);
+    padding:10px 18px 12px;
+    display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+  }
+  .brand{
+    font-family:'Kalam',cursive;font-weight:700;font-size:20px;letter-spacing:.5px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .brand .mk{
+    width:26px;height:26px;border:2px solid var(--ink);
+    border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+    display:grid;place-items:center;font-size:13px;background:var(--gold);
+  }
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;}
+  .tab{
+    font-family:'Kalam',cursive;font-weight:700;font-size:15px;
+    background:transparent;color:var(--ink);
+    border:2px solid var(--ink);
+    border-radius:225px 12px 200px 12px/12px 200px 12px 225px;
+    padding:6px 14px;cursor:pointer;line-height:1.1;
+  }
+  .tab small{display:block;font-family:'Patrick Hand';font-weight:400;font-size:11px;color:var(--ink-soft);}
+  .tab.active{background:var(--navy);color:#fff;}
+  .tab.active small{color:#cdd4dc;}
+  .spacer{flex:1 1 40px;}
+  .toggles{display:flex;gap:8px;align-items:center;}
+  .tg{
+    font-family:'Patrick Hand';font-size:13px;
+    border:2px solid var(--ink);border-radius:200px 10px 180px 10px/10px 180px 10px 200px;
+    background:transparent;cursor:pointer;padding:5px 11px;color:var(--ink);
+    display:flex;align-items:center;gap:6px;
+  }
+  .tg .dot{width:11px;height:11px;border:2px solid var(--ink);border-radius:50%;background:transparent;}
+  .tg.on .dot{background:var(--gold);}
+
+  /* ---------- Stage ---------- */
+  .stage{padding:26px 18px 60px;display:flex;justify-content:center;}
+  .frame{
+    width:100%;max-width:1040px;background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:6px;
+    box-shadow:6px 7px 0 rgba(43,43,43,.16);
+    overflow:hidden;
+  }
+  .wf{display:none;}
+  .wf.active{display:block;}
+
+  /* browser chrome hint */
+  .chrome{
+    background:#efe8db;border-bottom:2px solid var(--ink);
+    display:flex;align-items:center;gap:7px;padding:8px 12px;
+  }
+  .chrome i{width:11px;height:11px;border:2px solid var(--ink);border-radius:50%;display:inline-block;}
+  .chrome .url{
+    flex:1;margin-left:8px;border:2px solid var(--ink);border-radius:6px;
+    background:var(--paper);font-size:12px;padding:3px 10px;color:var(--ink-soft);
+    font-family:'Patrick Hand';
+  }
+
+  /* ---------- Generic wireframe pieces ---------- */
+  .pad{padding:30px 38px;}
+  .pad-lg{padding:46px 38px;}
+  section.block + section.block{border-top:2px dashed #c9bfae;}
+
+  .nav{
+    display:flex;align-items:center;gap:20px;padding:16px 38px;border-bottom:2px solid var(--ink);
+  }
+  .logo{font-family:'Kalam',cursive;font-weight:700;font-size:19px;display:flex;align-items:center;gap:8px;}
+  .logo .mk{width:24px;height:24px;border:2px solid var(--ink);background:var(--gold);
+    border-radius:255px 15px 225px 15px/15px 225px 15px 255px;display:grid;place-items:center;font-size:12px;}
+  .navlinks{display:flex;gap:16px;flex:1;}
+  .navlinks span{font-size:14px;color:var(--ink-soft);}
+  .eyebrow{
+    font-family:'Kalam',cursive;font-weight:700;font-size:13px;letter-spacing:1.5px;
+    text-transform:uppercase;color:var(--brown);margin:0 0 10px;
+  }
+  h1.disp{font-family:'Kalam',cursive;font-weight:700;font-size:42px;line-height:1.05;margin:0 0 16px;}
+  h2.sec{font-family:'Kalam',cursive;font-weight:700;font-size:28px;line-height:1.1;margin:0 0 6px;}
+  .sub{font-size:16px;color:var(--ink-soft);max-width:60ch;margin:0;}
+
+  /* gray placeholder text bars */
+  .lines{display:flex;flex-direction:column;gap:7px;margin:14px 0;}
+  .ln{height:9px;border-radius:6px;background:var(--bar);}
+  .ln.w90{width:90%;} .ln.w80{width:80%;} .ln.w70{width:70%;}
+  .ln.w60{width:60%;} .ln.w50{width:50%;} .ln.w40{width:40%;}
+
+  .btn{
+    font-family:'Kalam',cursive;font-weight:700;font-size:15px;
+    display:inline-flex;align-items:center;gap:8px;padding:10px 20px;cursor:pointer;
+    border:2px solid var(--ink);border-radius:225px 12px 200px 12px/12px 200px 12px 225px;
+    background:var(--gold);color:var(--ink);
+  }
+  .btn.ghost{background:transparent;}
+  .btn.dark{background:var(--navy);color:#fff;}
+  .btnrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:22px;}
+
+  /* image placeholder */
+  .imgbox{
+    background:
+      linear-gradient(to top right, transparent calc(50% - 1px), rgba(43,43,43,.18), transparent calc(50% + 1px)),
+      linear-gradient(to top left, transparent calc(50% - 1px), rgba(43,43,43,.18), transparent calc(50% + 1px)),
+      var(--box);
+    border:2px solid var(--ink);border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-soft);font-size:13px;min-height:120px;position:relative;
+  }
+  .imgbox span{background:var(--paper);padding:2px 8px;border-radius:5px;border:1px dashed #b3a890;}
+
+  .grid{display:grid;gap:18px;}
+  .g2{grid-template-columns:1fr 1fr;}
+  .g3{grid-template-columns:repeat(3,1fr);}
+  .g4{grid-template-columns:repeat(4,1fr);}
+
+  .card{
+    border:2px solid var(--ink);border-radius:8px;padding:16px;background:#fffdf8;
+    box-shadow:3px 4px 0 rgba(43,43,43,.10);
+  }
+  .ico{width:34px;height:34px;border:2px solid var(--ink);border-radius:8px;background:var(--box);
+    display:grid;place-items:center;font-size:15px;margin-bottom:10px;}
+  .card h3{font-family:'Kalam',cursive;font-weight:700;font-size:17px;margin:0 0 6px;}
+
+  .pill{
+    display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-soft);
+    border:2px solid var(--ink);border-radius:200px;padding:4px 12px;background:#fffdf8;
+  }
+  .pillrow{display:flex;gap:10px;flex-wrap:wrap;}
+
+  /* step */
+  .steps{display:flex;gap:0;align-items:stretch;flex-wrap:wrap;}
+  .step{flex:1;min-width:130px;position:relative;padding:6px 12px;}
+  .step .num{width:30px;height:30px;border:2px solid var(--ink);border-radius:50%;
+    display:grid;place-items:center;font-family:'Kalam';font-weight:700;background:var(--gold);margin-bottom:9px;}
+  .step .arrow{position:absolute;right:-7px;top:14px;font-size:18px;color:var(--brown);}
+  .step h4{font-family:'Kalam';font-weight:700;margin:0 0 5px;font-size:15px;}
+
+  /* stat band */
+  .band{background:var(--navy);color:#f4efe6;}
+  .band .eyebrow{color:var(--gold);}
+  .band h2.sec, .band .stat .big{color:#fff;}
+  .band .sub{color:#c3ccd6;}
+  .stat .big{font-family:'Kalam',cursive;font-weight:700;font-size:40px;line-height:1;}
+  .stat .lbl{font-size:14px;color:var(--ink-soft);margin-top:6px;}
+  .band .stat .lbl{color:#b9c2cd;}
+  .ph{color:var(--blue);} /* placeholder marker color when accent on */
+
+  /* form */
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:13px;color:var(--ink-soft);}
+  .field .inp{border:2px solid var(--ink);border-radius:6px;height:38px;background:#fffdf8;}
+  .field .inp.area{height:84px;}
+
+  /* region cities */
+  .city{border:2px solid var(--ink);border-radius:8px;overflow:hidden;background:#fffdf8;}
+  .city .name{font-family:'Kalam';font-weight:700;font-size:18px;padding:10px 14px;}
+
+  .footer{background:#efe8db;border-top:2px solid var(--ink);padding:22px 38px;display:flex;
+    justify-content:space-between;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--ink-soft);}
+
+  /* vertical side label (dir B) */
+  .sideflag{writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Kalam';font-weight:700;
+    letter-spacing:3px;text-transform:uppercase;color:var(--brown);font-size:13px;}
+
+  /* dashboard mock (dir C) */
+  .dash{border:2px solid var(--ink);border-radius:10px;background:#fffdf8;overflow:hidden;
+    box-shadow:5px 6px 0 rgba(43,43,43,.12);}
+  .dash .bar{height:30px;background:var(--navy);display:flex;align-items:center;gap:6px;padding:0 12px;}
+  .dash .bar i{width:8px;height:8px;border-radius:50%;background:#fff5;display:inline-block;}
+  .dash .body{display:grid;grid-template-columns:78px 1fr;gap:0;}
+  .dash .side{background:#efe8db;border-right:2px solid var(--ink);padding:12px 8px;display:flex;flex-direction:column;gap:9px;}
+  .dash .side .it{height:9px;border-radius:5px;background:var(--bar-dark);}
+  .dash .main{padding:14px;display:grid;gap:12px;}
+  .dash .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .dash .kpi{border:2px solid var(--ink);border-radius:7px;padding:9px;background:var(--paper);}
+  .dash .kpi .big{font-family:'Kalam';font-weight:700;font-size:22px;}
+  .dash .chart{border:2px solid var(--ink);border-radius:7px;height:110px;background:
+      linear-gradient(transparent 96%, rgba(43,43,43,.12) 96%) 0 0/100% 25%,
+      var(--paper);
+    position:relative;overflow:hidden;}
+  .dash .chart svg{position:absolute;inset:0;width:100%;height:100%;}
+
+  /* flow nodes (dir C automation) */
+  .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .node{border:2px solid var(--ink);border-radius:225px 12px 200px 12px/12px 200px 12px 225px;
+    padding:12px 16px;background:#fffdf8;font-family:'Kalam';font-weight:700;font-size:14px;min-width:120px;text-align:center;}
+  .node.ai{background:var(--gold);}
+  .flow .ar{font-size:20px;color:var(--brown);}
+
+  /* annotations */
+  .anno{
+    position:relative;font-family:'Kalam',cursive;font-weight:400;color:var(--blue);
+    font-size:14px;display:inline-block;
+  }
+  .note{
+    font-family:'Kalam',cursive;color:var(--blue);font-size:13px;
+    border:2px dashed var(--blue);border-radius:200px 10px 180px 10px/10px 180px 10px 200px;
+    padding:4px 11px;background:#eef2ff;display:inline-flex;align-items:center;gap:6px;margin:0;
+  }
+  body.no-anno .note, body.no-anno .anno-only{display:none !important;}
+  body.no-accent .ph{color:var(--ink-soft);}
+  body.no-accent .note{color:var(--ink-soft);border-color:var(--ink-soft);background:#f1ece2;}
+
+  .dirhint{text-align:center;font-family:'Kalam';color:var(--ink-soft);font-size:13px;margin:-8px 0 18px;}
+
+  @media (max-width:780px){
+    .g3,.g4{grid-template-columns:1fr 1fr;}
+    .g2{grid-template-columns:1fr;}
+    h1.disp{font-size:32px;}
+    .navlinks{display:none;}
+  }
+</style>
+</head>
+<body class="">
+
+  <!-- ============ TOOLBAR ============ -->
+  <div class="toolbar">
+    <div class="brand"><span class="mk">IA</span> IA NORTE · Wireframes</div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-dir="a">Dirección A<small>Corporativo clásico</small></button>
+      <button class="tab" data-dir="b">Dirección B<small>Editorial / zig-zag</small></button>
+      <button class="tab" data-dir="c">Dirección C<small>Producto · IA al frente</small></button>
+    </div>
+    <div class="spacer"></div>
+    <div class="toggles">
+      <button class="tg on" id="tgAnno"><span class="dot"></span>Anotaciones</button>
+      <button class="tg on" id="tgAccent"><span class="dot"></span>Color de acento</button>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="frame">
+      <div class="chrome"><i></i><i></i><i></i><div class="url">ianorte.cl — Soluciones de IA para la minería del norte</div></div>
+
+      <!-- ==================================================== -->
+      <!-- DIRECTION A — CORPORATIVO CLÁSICO -->
+      <!-- ==================================================== -->
+      <div class="wf active" data-dir="a" data-screen-label="Dirección A">
+
+        <!-- nav -->
+        <nav class="nav">
+          <div class="logo"><span class="mk">IA</span> IA NORTE</div>
+          <div class="navlinks"><span>Soluciones</span><span>Cómo funciona</span><span>Por qué IA</span><span>Regiones</span><span>Contacto</span></div>
+          <button class="btn dark">Solicitar demo</button>
+        </nav>
+
+        <!-- hero -->
+        <section class="block pad-lg">
+          <div class="grid g2" style="align-items:center;">
+            <div>
+              <p class="eyebrow">Inteligencia artificial · Minería</p>
+              <h1 class="disp">Automatizamos los procesos de tu operación minera</h1>
+              <p class="sub">IA aplicada a planificación, sensores, flota y especificaciones — para faenas del norte de Chile.</p>
+              <div class="btnrow">
+                <button class="btn">Solicitar demo</button>
+                <button class="btn ghost">Ver soluciones</button>
+              </div>
+              <p class="note anno-only" style="margin-top:18px;">↑ Tagline + CTA principal arriba del pliegue</p>
+            </div>
+            <div class="imgbox" style="min-height:230px;"><span>imagen / faena minera</span></div>
+          </div>
+          <!-- trust bar -->
+          <div class="pillrow" style="margin-top:30px;">
+            <span class="pill">✓ Certificación Claude Code</span>
+            <span class="pill">✓ Experiencia comprobada</span>
+            <span class="pill">✓ Enfoque local: Norte de Chile</span>
+          </div>
+        </section>
+
+        <!-- services -->
+        <section class="block pad-lg">
+          <p class="eyebrow">Soluciones</p>
+          <h2 class="sec">Lo que resolvemos</h2>
+          <p class="sub">Cualquier flujo que tu faena necesite — orquestado con IA.</p>
+          <p class="note anno-only" style="margin-top:10px;">Grilla de tarjetas · 6 servicios</p>
+          <div class="grid g3" style="margin-top:22px;">
+            <div class="card"><div class="ico">⛏️</div><h3>Planificación minera</h3><div class="lines"><div class="ln w90"></div><div class="ln w70"></div></div></div>
+            <div class="card"><div class="ico">📡</div><h3>Sensores & monitoreo</h3><div class="lines"><div class="ln w90"></div><div class="ln w60"></div></div></div>
+            <div class="card"><div class="ico">🚛</div><h3>Gestión de flota</h3><div class="lines"><div class="ln w80"></div><div class="ln w70"></div></div></div>
+            <div class="card"><div class="ico">📐</div><h3>Planos & especificaciones</h3><div class="lines"><div class="ln w90"></div><div class="ln w50"></div></div></div>
+            <div class="card"><div class="ico">⚙️</div><h3>Automatización de procesos</h3><div class="lines"><div class="ln w80"></div><div class="ln w70"></div></div></div>
+            <div class="card"><div class="ico">✨</div><h3>Soluciones a medida</h3><div class="lines"><div class="ln w90"></div><div class="ln w60"></div></div></div>
+          </div>
+        </section>
+
+        <!-- how it works -->
+        <section class="block pad-lg">
+          <p class="eyebrow">Cómo funciona</p>
+          <h2 class="sec">De los datos a la automatización</h2>
+          <div class="steps" style="margin-top:24px;">
+            <div class="step"><div class="num">1</div><h4>Diagnóstico</h4><div class="lines"><div class="ln w90"></div><div class="ln w60"></div></div><span class="arrow">→</span></div>
+            <div class="step"><div class="num">2</div><h4>Integración de datos</h4><div class="lines"><div class="ln w80"></div><div class="ln w70"></div></div><span class="arrow">→</span></div>
+            <div class="step"><div class="num">3</div><h4>Modelos de IA</h4><div class="lines"><div class="ln w90"></div><div class="ln w50"></div></div><span class="arrow">→</span></div>
+            <div class="step"><div class="num">4</div><h4>Automatización</h4><div class="lines"><div class="ln w80"></div><div class="ln w60"></div></div><span class="arrow">→</span></div>
+            <div class="step"><div class="num">5</div><h4>Monitoreo</h4><div class="lines"><div class="ln w70"></div><div class="ln w50"></div></div></div>
+          </div>
+        </section>
+
+        <!-- why AI -->
+        <section class="block pad-lg">
+          <div class="grid g2" style="align-items:center;">
+            <div class="imgbox" style="min-height:200px;"><span>imagen / equipo · tecnología</span></div>
+            <div>
+              <p class="eyebrow">Por qué IA</p>
+              <h2 class="sec">Somos una empresa de IA, primero</h2>
+              <p class="sub">No agregamos IA como adorno: es el centro de cómo trabajamos.</p>
+              <div class="lines"><div class="ln w90"></div><div class="ln w80"></div><div class="ln w70"></div></div>
+              <div class="pillrow" style="margin-top:14px;">
+                <span class="pill">Certificación Claude Code</span>
+                <span class="pill">Background en tecnología</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- region -->
+        <section class="block pad-lg">
+          <p class="eyebrow">Regiones</p>
+          <h2 class="sec">Enfocados en el norte de Chile</h2>
+          <div class="grid g3" style="margin-top:20px;">
+            <div class="city"><div class="imgbox" style="min-height:110px;border:0;border-bottom:2px solid var(--ink);border-radius:0;"><span>mapa</span></div><div class="name">Antofagasta</div></div>
+            <div class="city"><div class="imgbox" style="min-height:110px;border:0;border-bottom:2px solid var(--ink);border-radius:0;"><span>mapa</span></div><div class="name">Calama</div></div>
+            <div class="city"><div class="imgbox" style="min-height:110px;border:0;border-bottom:2px solid var(--ink);border-radius:0;"><span>mapa</span></div><div class="name">Iquique</div></div>
+          </div>
+        </section>
+
+        <!-- stats band -->
+        <section class="block band pad-lg">
+          <p class="eyebrow">Impacto</p>
+          <h2 class="sec">Resultados que importan</h2>
+          <p class="note anno-only" style="margin-top:10px;">Cifras = placeholder · reemplazar con datos reales</p>
+          <div class="grid g3" style="margin-top:22px;">
+            <div class="stat"><div class="big ph">+30%</div><div class="lbl">eficiencia operativa*</div></div>
+            <div class="stat"><div class="big ph">−20%</div><div class="lbl">costos de proceso*</div></div>
+            <div class="stat"><div class="big ph">24/7</div><div class="lbl">monitoreo automatizado</div></div>
+          </div>
+        </section>
+
+        <!-- contact -->
+        <section class="block pad-lg">
+          <div class="grid g2">
+            <div>
+              <p class="eyebrow">Contacto</p>
+              <h2 class="sec">Conversemos sobre tu faena</h2>
+              <p class="sub">Cuéntanos tu desafío y te mostramos cómo automatizarlo.</p>
+              <div class="lines" style="margin-top:18px;"><div class="ln w70"></div><div class="ln w50"></div></div>
+            </div>
+            <div class="card">
+              <div class="grid g2" style="gap:12px;">
+                <div class="field"><label>Nombre</label><div class="inp"></div></div>
+                <div class="field"><label>Empresa</label><div class="inp"></div></div>
+                <div class="field"><label>Email</label><div class="inp"></div></div>
+                <div class="field"><label>Teléfono</label><div class="inp"></div></div>
+              </div>
+              <div class="field" style="margin-top:12px;"><label>Mensaje</label><div class="inp area"></div></div>
+              <div class="btnrow"><button class="btn">Solicitar demo</button></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer"><div class="logo"><span class="mk">IA</span> IA NORTE</div><div>Antofagasta · Calama · Iquique — © 2026</div></div>
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- DIRECTION B — EDITORIAL / ZIG-ZAG -->
+      <!-- ==================================================== -->
+      <div class="wf" data-dir="b" data-screen-label="Dirección B">
+
+        <nav class="nav">
+          <div class="logo"><span class="mk">IA</span> IA NORTE</div>
+          <div class="navlinks" style="justify-content:flex-end;"><span>Soluciones</span><span>Proceso</span><span>Regiones</span></div>
+          <button class="btn ghost">Contacto →</button>
+        </nav>
+
+        <!-- hero: big left-aligned + side flag -->
+        <section class="block pad-lg" style="display:flex;gap:24px;">
+          <div class="sideflag anno-only">IA · Minería · Norte de Chile</div>
+          <div style="flex:1;">
+            <p class="eyebrow">Empresa de soluciones de IA</p>
+            <h1 class="disp" style="font-size:54px;max-width:16ch;">Inteligencia artificial para la minería del norte.</h1>
+            <div class="grid g2" style="margin-top:18px;align-items:end;">
+              <p class="sub">Planificación, sensores, flota y especificaciones — automatizados de punta a punta.</p>
+              <div class="btnrow" style="margin:0;justify-content:flex-end;">
+                <button class="btn">Solicitar demo</button>
+              </div>
+            </div>
+            <div class="imgbox" style="min-height:240px;margin-top:24px;"><span>imagen full-bleed / faena · desierto</span></div>
+            <p class="note anno-only" style="margin-top:14px;">Hero asimétrico · titular grande a la izquierda</p>
+          </div>
+        </section>
+
+        <!-- services as alternating zig-zag rows -->
+        <section class="block pad-lg">
+          <p class="eyebrow">Soluciones</p>
+          <h2 class="sec">Cada flujo, resuelto con IA</h2>
+          <p class="note anno-only" style="margin-top:8px;">Filas alternadas texto ↔ imagen</p>
+
+          <div class="grid g2" style="align-items:center;margin-top:24px;">
+            <div><div class="ico">⛏️</div><h3 style="font-family:'Kalam';font-size:20px;margin:0 0 8px;">Planificación minera</h3><div class="lines"><div class="ln w90"></div><div class="ln w80"></div><div class="ln w60"></div></div></div>
+            <div class="imgbox" style="min-height:170px;"><span>imagen</span></div>
+          </div>
+          <div class="grid g2" style="align-items:center;margin-top:26px;">
+            <div class="imgbox" style="min-height:170px;"><span>imagen</span></div>
+            <div><div class="ico">📡</div><h3 style="font-family:'Kalam';font-size:20px;margin:0 0 8px;">Sensores & monitoreo en tiempo real</h3><div class="lines"><div class="ln w90"></div><div class="ln w70"></div><div class="ln w50"></div></div></div>
+          </div>
+          <div class="grid g2" style="align-items:center;margin-top:26px;">
+            <div><div class="ico">🚛</div><h3 style="font-family:'Kalam';font-size:20px;margin:0 0 8px;">Gestión inteligente de flota</h3><div class="lines"><div class="ln w80"></div><div class="ln w90"></div><div class="ln w60"></div></div></div>
+            <div class="imgbox" style="min-height:170px;"><span>imagen / camiones</span></div>
+          </div>
+        </section>
+
+        <!-- automation as vertical timeline -->
+        <section class="block band pad-lg">
+          <p class="eyebrow">Proceso</p>
+          <h2 class="sec">Cómo automatizamos</h2>
+          <div style="margin-top:22px;border-left:2px solid var(--gold);padding-left:22px;display:flex;flex-direction:column;gap:20px;">
+            <div><div class="step" style="padding:0;"><div class="num">1</div><h4 style="color:#fff;">Diagnóstico de la faena</h4></div><div class="lines"><div class="ln w70"></div></div></div>
+            <div><div class="step" style="padding:0;"><div class="num">2</div><h4 style="color:#fff;">Integración de datos & sensores</h4></div><div class="lines"><div class="ln w80"></div></div></div>
+            <div><div class="step" style="padding:0;"><div class="num">3</div><h4 style="color:#fff;">Modelos de IA a medida</h4></div><div class="lines"><div class="ln w60"></div></div></div>
+            <div><div class="step" style="padding:0;"><div class="num">4</div><h4 style="color:#fff;">Automatización & monitoreo 24/7</h4></div><div class="lines"><div class="ln w70"></div></div></div>
+          </div>
+          <p class="note anno-only" style="margin-top:18px;">Timeline vertical (sección oscura)</p>
+        </section>
+
+        <!-- region cities -->
+        <section class="block pad-lg">
+          <div class="grid g2" style="align-items:center;">
+            <div>
+              <p class="eyebrow">Regiones</p>
+              <h2 class="sec">Presencia en el norte</h2>
+              <p class="sub">Cerca de las faenas que servimos.</p>
+              <div class="pillrow" style="margin-top:16px;">
+                <span class="pill">📍 Antofagasta</span>
+                <span class="pill">📍 Calama</span>
+                <span class="pill">📍 Iquique</span>
+              </div>
+            </div>
+            <div class="imgbox" style="min-height:200px;"><span>mapa del norte de Chile</span></div>
+          </div>
+        </section>
+
+        <!-- stats inline -->
+        <section class="block pad-lg">
+          <div class="grid g4">
+            <div class="stat"><div class="big ph">+30%</div><div class="lbl">eficiencia*</div></div>
+            <div class="stat"><div class="big ph">−20%</div><div class="lbl">costos*</div></div>
+            <div class="stat"><div class="big ph">24/7</div><div class="lbl">monitoreo</div></div>
+            <div class="stat"><div class="big ph">3</div><div class="lbl">ciudades</div></div>
+          </div>
+          <p class="note anno-only" style="margin-top:12px;">Cifras = placeholder</p>
+        </section>
+
+        <!-- contact: full-width split -->
+        <section class="block band pad-lg">
+          <div class="grid g2">
+            <div>
+              <p class="eyebrow">Contacto</p>
+              <h2 class="sec">Automaticemos tu operación</h2>
+              <p class="sub">Respuesta en menos de 24 horas.</p>
+            </div>
+            <div class="card" style="background:#fffdf8;">
+              <div class="grid g2" style="gap:12px;">
+                <div class="field"><label>Nombre</label><div class="inp"></div></div>
+                <div class="field"><label>Empresa</label><div class="inp"></div></div>
+                <div class="field"><label>Email</label><div class="inp"></div></div>
+                <div class="field"><label>Teléfono</label><div class="inp"></div></div>
+              </div>
+              <div class="btnrow"><button class="btn">Solicitar demo</button></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer"><div class="logo"><span class="mk">IA</span> IA NORTE</div><div>Certificación Claude Code · Norte de Chile — © 2026</div></div>
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- DIRECTION C — PRODUCTO / IA AL FRENTE -->
+      <!-- ==================================================== -->
+      <div class="wf" data-dir="c" data-screen-label="Dirección C">
+
+        <nav class="nav">
+          <div class="logo"><span class="mk">IA</span> IA NORTE</div>
+          <div class="navlinks"><span>Plataforma</span><span>Soluciones</span><span>Proceso</span><span>Regiones</span></div>
+          <button class="btn dark">Solicitar demo</button>
+        </nav>
+
+        <!-- hero with dashboard mock front & center -->
+        <section class="block pad-lg" style="text-align:center;">
+          <p class="eyebrow" style="display:inline-block;">Plataforma de IA para minería</p>
+          <h1 class="disp" style="font-size:46px;max-width:20ch;margin:6px auto 14px;">Tu operación minera, automatizada por IA</h1>
+          <p class="sub" style="margin:0 auto;text-align:center;">Una capa de inteligencia sobre planificación, sensores, flota y especificaciones.</p>
+          <div class="btnrow" style="justify-content:center;">
+            <button class="btn">Solicitar demo</button>
+            <button class="btn ghost">Ver la plataforma</button>
+          </div>
+
+          <!-- dashboard mock -->
+          <div class="dash" style="max-width:780px;margin:30px auto 0;text-align:left;">
+            <div class="bar"><i></i><i></i><i></i></div>
+            <div class="body">
+              <div class="side"><div class="it" style="width:80%;"></div><div class="it" style="width:60%;"></div><div class="it" style="width:90%;"></div><div class="it" style="width:50%;"></div><div class="it" style="width:70%;"></div></div>
+              <div class="main">
+                <div class="kpis">
+                  <div class="kpi"><div class="big ph">+30%</div><div class="lbl">eficiencia*</div></div>
+                  <div class="kpi"><div class="big ph">142</div><div class="lbl">sensores*</div></div>
+                  <div class="kpi"><div class="big ph">24/7</div><div class="lbl">monitoreo</div></div>
+                </div>
+                <div class="chart"><svg viewBox="0 0 400 110" preserveAspectRatio="none"><polyline points="0,90 50,70 100,78 150,50 200,58 250,32 300,40 350,18 400,26" fill="none" stroke="#4C6EF5" stroke-width="3"/></svg></div>
+              </div>
+            </div>
+          </div>
+          <p class="note anno-only" style="margin-top:16px;">Mock de producto al frente · IA como protagonista</p>
+        </section>
+
+        <!-- services as icon tiles -->
+        <section class="block pad-lg">
+          <p class="eyebrow">Soluciones</p>
+          <h2 class="sec">Un módulo para cada flujo</h2>
+          <div class="grid g3" style="margin-top:22px;">
+            <div class="card"><div class="ico">⛏️</div><h3>Planificación</h3><div class="lines"><div class="ln w80"></div></div></div>
+            <div class="card"><div class="ico">📡</div><h3>Sensores</h3><div class="lines"><div class="ln w70"></div></div></div>
+            <div class="card"><div class="ico">🚛</div><h3>Flota</h3><div class="lines"><div class="ln w80"></div></div></div>
+            <div class="card"><div class="ico">📐</div><h3>Especificaciones</h3><div class="lines"><div class="ln w70"></div></div></div>
+            <div class="card"><div class="ico">⚙️</div><h3>Automatización</h3><div class="lines"><div class="ln w80"></div></div></div>
+            <div class="card"><div class="ico">✨</div><h3>A medida</h3><div class="lines"><div class="ln w60"></div></div></div>
+          </div>
+        </section>
+
+        <!-- automation as flow diagram -->
+        <section class="block pad-lg">
+          <p class="eyebrow">Cómo funciona</p>
+          <h2 class="sec">El flujo de automatización</h2>
+          <p class="note anno-only" style="margin-top:8px;">Diagrama de nodos · IA en el centro</p>
+          <div class="flow" style="margin-top:26px;">
+            <div class="node">Datos & sensores</div>
+            <span class="ar">→</span>
+            <div class="node ai">Motor de IA</div>
+            <span class="ar">→</span>
+            <div class="node">Decisiones</div>
+            <span class="ar">→</span>
+            <div class="node">Automatización</div>
+          </div>
+          <div class="flow" style="margin-top:14px;">
+            <span class="note anno-only">↑ ciclo de retroalimentación continuo (monitoreo 24/7)</span>
+          </div>
+        </section>
+
+        <!-- why AI metric callouts -->
+        <section class="block band pad-lg">
+          <div class="grid g2" style="align-items:center;">
+            <div>
+              <p class="eyebrow">Por qué IA</p>
+              <h2 class="sec">Construido por especialistas en IA</h2>
+              <div class="lines"><div class="ln w90"></div><div class="ln w80"></div><div class="ln w60"></div></div>
+              <div class="pillrow" style="margin-top:14px;">
+                <span class="pill" style="background:#fffdf8;">Certificación Claude Code</span>
+                <span class="pill" style="background:#fffdf8;">Background en tecnología</span>
+              </div>
+            </div>
+            <div class="grid g2" style="gap:14px;">
+              <div class="kpi card" style="background:#fffdf8;"><div class="big ph" style="font-family:'Kalam';font-weight:700;font-size:30px;">+30%</div><div class="lbl">eficiencia*</div></div>
+              <div class="kpi card" style="background:#fffdf8;"><div class="big ph" style="font-family:'Kalam';font-weight:700;font-size:30px;">−20%</div><div class="lbl">costos*</div></div>
+              <div class="kpi card" style="background:#fffdf8;"><div class="big ph" style="font-family:'Kalam';font-weight:700;font-size:30px;">24/7</div><div class="lbl">monitoreo</div></div>
+              <div class="kpi card" style="background:#fffdf8;"><div class="big ph" style="font-family:'Kalam';font-weight:700;font-size:30px;">3</div><div class="lbl">ciudades</div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- region strip -->
+        <section class="block pad-lg">
+          <p class="eyebrow">Regiones</p>
+          <h2 class="sec">Norte de Chile</h2>
+          <div class="grid g3" style="margin-top:18px;">
+            <div class="imgbox" style="min-height:90px;"><span>Antofagasta</span></div>
+            <div class="imgbox" style="min-height:90px;"><span>Calama</span></div>
+            <div class="imgbox" style="min-height:90px;"><span>Iquique</span></div>
+          </div>
+        </section>
+
+        <!-- contact CTA -->
+        <section class="block pad-lg" style="text-align:center;">
+          <p class="eyebrow" style="display:inline-block;">Contacto</p>
+          <h2 class="sec">Agenda una demo de la plataforma</h2>
+          <div class="card" style="max-width:560px;margin:18px auto 0;text-align:left;">
+            <div class="grid g2" style="gap:12px;">
+              <div class="field"><label>Nombre</label><div class="inp"></div></div>
+              <div class="field"><label>Empresa</label><div class="inp"></div></div>
+              <div class="field"><label>Email</label><div class="inp"></div></div>
+              <div class="field"><label>Teléfono</label><div class="inp"></div></div>
+            </div>
+            <div class="btnrow" style="justify-content:center;"><button class="btn">Solicitar demo</button></div>
+          </div>
+        </section>
+
+        <div class="footer"><div class="logo"><span class="mk">IA</span> IA NORTE</div><div>Plataforma de IA para minería · Norte de Chile — © 2026</div></div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const wfs = document.querySelectorAll('.wf');
+  tabs.forEach(t=>t.addEventListener('click',()=>{
+    const d=t.dataset.dir;
+    tabs.forEach(x=>x.classList.toggle('active',x===t));
+    wfs.forEach(w=>w.classList.toggle('active',w.dataset.dir===d));
+    window.scrollTo({top:0});
+    try{localStorage.setItem('ianorte_dir',d);}catch(e){}
+  }));
+  // restore
+  try{const d=localStorage.getItem('ianorte_dir');if(d){document.querySelector('.tab[data-dir="'+d+'"]')?.click();}}catch(e){}
+
+  const tgAnno=document.getElementById('tgAnno');
+  const tgAccent=document.getElementById('tgAccent');
+  tgAnno.addEventListener('click',()=>{tgAnno.classList.toggle('on');document.body.classList.toggle('no-anno',!tgAnno.classList.contains('on'));});
+  tgAccent.addEventListener('click',()=>{tgAccent.classList.toggle('on');document.body.classList.toggle('no-accent',!tgAccent.classList.contains('on'));});
+</script>
+</body>
+</html>

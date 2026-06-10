@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA NORTE — Flujo de IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF7F0;
+    --paper2:#F4ECDF;
+    --ink:#1F2A38;
+    --ink-soft:#6b6258;
+    --gold:#D9A441;
+    --gold-d:#C2872B;
+    --brown:#B07B4F;
+    --navy:#1F2A38;
+    --blue:#3D5BC8;
+    --line:#cdbfa6;
+    --card:#FFFDF8;
+    --border:#e0d4bd;
+    --border-soft:#e7dcc6;
+    --topo:#caa86f;
+    --bg-glow:#fffdf8;
+    /* energy (overridden by JS) */
+    --dash-dur:2.8s; --dash-fb:3.4s; --spin1:26s; --spin2:40s; --pulse-dur:3s;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, var(--bg-glow), transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  /* faint topographic / mining-map contours */
+  .topo{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;}
+  .topo svg{width:100%;height:100%;}
+  .topo path{fill:none;stroke:var(--topo);stroke-width:1;opacity:.16;}
+
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:34px 26px 60px;}
+
+  header.head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:6px;}
+  .brand{display:flex;align-items:center;gap:10px;white-space:nowrap;}
+  .brand .mk{flex:none;width:30px;height:30px;border-radius:8px;background:var(--gold);color:var(--navy);
+    display:grid;place-items:center;font-weight:700;font-size:14px;letter-spacing:.5px;}
+  .brand b{font-size:18px;letter-spacing:.5px;white-space:nowrap;}
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--brown);margin:2px 0 0;}
+  h1{font-size:30px;line-height:1.1;margin:14px 0 6px;letter-spacing:-.5px;max-width:22ch;}
+  .lede{color:var(--ink-soft);font-size:16px;max-width:62ch;margin:0;}
+
+  .ctrl{display:flex;gap:8px;align-items:center;}
+  .btn{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.5px;cursor:pointer;
+    border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:8px;padding:7px 12px;
+    display:inline-flex;align-items:center;gap:7px;}
+  .btn .d{width:9px;height:9px;border-radius:50%;background:var(--blue);display:inline-block;}
+  .btn.off .d{background:#b9ad97;}
+
+  /* diagram */
+  .diagram{position:relative;margin-top:30px;min-height:520px;}
+  .edges{position:absolute;inset:0;width:100%;height:100%;z-index:0;overflow:visible;}
+  .cols{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1.05fr 1fr;gap:30px;align-items:center;}
+
+  .colhead{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--brown);margin:0 0 14px;display:flex;align-items:center;gap:8px;}
+  .colhead .n{width:18px;height:18px;border-radius:5px;background:var(--paper2);border:1.5px solid var(--line);
+    display:grid;place-items:center;color:var(--ink-soft);font-size:10px;}
+  .colhead.right{justify-content:flex-start;}
+
+  .stack{display:flex;flex-direction:column;gap:14px;}
+
+  .node{display:flex;align-items:center;gap:12px;background:var(--card);border:1.5px solid var(--border);
+    border-radius:12px;padding:12px 14px;box-shadow:0 2px 0 rgba(31,42,56,.05);position:relative;}
+  .node .ic{flex:none;width:38px;height:38px;border-radius:9px;background:var(--paper2);
+    display:grid;place-items:center;color:var(--ink);border:1.5px solid var(--border-soft);}
+  .node .ic svg{width:21px;height:21px;}
+  .node .nt b{display:block;font-size:14.5px;font-weight:600;line-height:1.2;}
+  .node .nt em{display:block;font-family:'IBM Plex Mono',monospace;font-style:normal;font-size:10.5px;
+    color:var(--ink-soft);letter-spacing:.3px;margin-top:3px;}
+  .node.human{border-color:var(--gold-d);background:linear-gradient(0deg, color-mix(in srgb, var(--gold) 16%, var(--card)), var(--card));}
+  .node.human .ic{background:color-mix(in srgb, var(--gold) 26%, var(--card));border-color:var(--gold);color:var(--gold-d);}
+
+  /* center AI core */
+  .corewrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+  .core{position:relative;width:188px;height:188px;border-radius:50%;overflow:visible;
+    background:radial-gradient(circle at 50% 36%, #3a2a12, #150d05 80%);
+    display:grid;place-items:center;text-align:center;color:#fff;
+    box-shadow:0 18px 50px rgba(120,76,16,.45), 0 0 72px rgba(217,164,65,.4), inset 0 -7px 22px rgba(0,0,0,.55), inset 0 7px 20px rgba(255,210,130,.14);}
+  .core-canvas{position:absolute;inset:0;z-index:1;border-radius:50%;}
+  .core .lbl{position:relative;z-index:3;}
+  .core .lbl b{font-size:16px;font-weight:700;letter-spacing:.3px;color:#fff;text-shadow:0 1px 9px rgba(0,0,0,.6);}
+  .core .lbl em{display:block;font-family:'IBM Plex Mono',monospace;font-style:normal;font-size:10px;
+    margin-top:4px;letter-spacing:.5px;color:#f3dcb2;text-shadow:0 1px 6px rgba(0,0,0,.6);}
+  .core .ic{color:#ffe1a8;}
+  .core .ic svg{width:34px;height:34px;margin-bottom:4px;}
+  .ring{position:absolute;border-radius:50%;border:1.5px dashed var(--gold-d);opacity:.55;}
+  .ring.r1{inset:-14px;animation:spin var(--spin1,26s) linear infinite;}
+  .ring.r2{inset:-30px;border-style:dotted;opacity:.35;animation:spin var(--spin2,40s) linear infinite reverse;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .pulse{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 0 rgba(217,164,65,.8);animation:pulse var(--pulse-dur,3s) ease-out infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,164,65,.8);}70%{box-shadow:0 0 0 32px rgba(217,164,65,0);}100%{box-shadow:0 0 0 0 rgba(217,164,65,0);}}
+  .coretag{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--brown);
+    border:1.5px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--card);}
+
+  /* edges */
+  .edge{fill:none;stroke-linecap:round;}
+  .edge.base{stroke:var(--line);stroke-width:2;opacity:.7;}
+  .edge.flow{stroke:var(--blue);stroke-width:2.4;stroke-dasharray:2 12;animation:dash var(--dash-dur,2.8s) linear infinite;}
+  .edge.fb-base{stroke:var(--line);stroke-width:2;stroke-dasharray:6 6;opacity:.7;}
+  .edge.fb-flow{stroke:var(--gold-d);stroke-width:2.4;stroke-dasharray:2 12;animation:dash var(--dash-fb,3.4s) linear infinite reverse;}
+  .edge.fb-fwd{stroke:var(--gold-d);stroke-width:2.4;stroke-dasharray:2 12;animation:dash var(--dash-fb,3.4s) linear infinite;}
+  @keyframes dash{to{stroke-dashoffset:-140;}}
+  .pkt{fill:var(--blue);}
+  .pkt.gold{fill:var(--gold-d);}
+  body.paused .edge.flow,body.paused .edge.fb-flow,body.paused .edge.fb-fwd{animation:none;}
+  body.paused .pkt{display:none;}
+  body.paused .ring,body.paused .pulse{animation:none;}
+
+  .fbnote{position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;z-index:2;
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:1px;color:var(--gold-d);
+    background:var(--paper);border:1.5px dashed var(--gold);border-radius:999px;padding:4px 12px;white-space:nowrap;}
+
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:46px;padding-top:18px;border-top:1.5px solid var(--border-soft);
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);letter-spacing:.5px;}
+  .legend span{display:inline-flex;align-items:center;gap:8px;}
+  .legend .sw{width:22px;height:0;border-top:2.4px solid var(--blue);}
+  .legend .sw.gold{border-top-style:dashed;border-color:var(--gold-d);}
+  .legend .sw.gsolid{border-top-color:var(--gold-d);}
+  .legend .sw.dot{width:10px;height:10px;border:0;border-radius:50%;background:var(--blue);}
+
+  .bots{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:4px;}
+  .botslbl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);}
+  .botrow{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;max-width:300px;}
+  .bot{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;
+    color:var(--ink);background:var(--card);border:1.5px solid var(--border);border-radius:999px;padding:4px 10px;}
+  .bot i{flex:none;width:7px;height:7px;border-radius:50%;background:var(--gold);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--gold) 22%, transparent);}
+
+  @media (max-width:860px){
+    .cols{grid-template-columns:1fr;gap:34px;}
+    .corewrap{order:0;}
+    .colhead{justify-content:center;}
+    h1{font-size:25px;}
+  }
+</style>
+</head>
+<body>
+<!-- icon defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="i-truck"><path d="M2 6h12v9H2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 9h4l3 3v3h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="1.6"/></g>
+    <g id="i-blueprint"><rect x="3" y="3" width="18" height="18" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 9h18M9 9v12M14 3v6" stroke="currentColor" stroke-width="1.4"/><circle cx="16" cy="15" r="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/></g>
+    <g id="i-layers"><path d="M12 3 3 8l9 5 9-5-9-5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 13l9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></g>
+    <g id="i-sensor"><circle cx="12" cy="12" r="2.4" fill="currentColor"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9M16.5 7.5a6.4 6.4 0 0 1 0 9M4.7 4.7a10.3 10.3 0 0 0 0 14.6M19.3 4.7a10.3 10.3 0 0 1 0 14.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></g>
+    <g id="i-cpu"><rect x="6" y="6" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" fill="currentColor"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+    <g id="i-chat"><path d="M4 5h16v11H9l-4 4V16H4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 9.5h8M8 12.5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></g>
+    <g id="i-sync"><path d="M20 11a8 8 0 0 0-14-4M4 13a8 8 0 0 0 14 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M6 3v4h4M18 21v-4h-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-gear"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+    <g id="i-usercheck"><circle cx="10" cy="8" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 20c0-3.3 2.7-6 6-6 1.4 0 2.7.5 3.7 1.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M15 18l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </defs>
+</svg>
+
+<div class="topo" aria-hidden="true">
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <path d="M-50 120 C 200 60, 420 200, 650 130 S 1050 60, 1260 160"/>
+    <path d="M-50 220 C 220 170, 430 300, 660 235 S 1060 170, 1260 260"/>
+    <path d="M-50 330 C 240 290, 440 410, 680 345 S 1080 290, 1260 370"/>
+    <path d="M-50 450 C 230 410, 450 530, 690 460 S 1090 410, 1260 490"/>
+    <path d="M-50 580 C 250 540, 460 660, 700 585 S 1100 540, 1260 610"/>
+    <path d="M-50 700 C 250 665, 470 780, 710 705 S 1110 665, 1260 730"/>
+  </svg>
+</div>
+
+<div class="wrap">
+  <header class="head">
+    <div>
+      <div class="brand"><span class="mk">IA</span><b>IA NORTE</b></div>
+      <p class="kicker">Cómo trabaja la IA</p>
+      <h1>La IA en el centro de tus procesos mineros</h1>
+      <p class="lede">Los datos de tus procesos entran, el agente de IA procesa y decide, y las respuestas salen a la operación y a tus sistemas — y mejora continuamente con la revisión de tu equipo.</p>
+    </div>
+    <div class="ctrl">
+      <button class="btn" id="tgAnim"><span class="d"></span>Animación</button>
+    </div>
+  </header>
+
+  <div class="diagram" id="diagram">
+    <svg class="edges" id="edges" aria-hidden="true"></svg>
+    <div class="cols">
+      <!-- INPUTS -->
+      <div>
+        <p class="colhead"><span class="n">01</span> Datos / Entradas</p>
+        <div class="stack">
+          <div class="node" data-anchor="in" id="n-truck"><span class="ic"><svg><use href="#i-truck"/></svg></span><div class="nt"><b>Sensores de camiones</b><em>telemetría · GPS · carga</em></div></div>
+          <div class="node" data-anchor="in" id="n-blue"><span class="ic"><svg><use href="#i-blueprint"/></svg></span><div class="nt"><b>Planos & especificaciones</b><em>CAD · documentos técnicos</em></div></div>
+          <div class="node" data-anchor="in" id="n-plan"><span class="ic"><svg><use href="#i-layers"/></svg></span><div class="nt"><b>Planificación minera</b><em>turnos · rutas · producción</em></div></div>
+          <div class="node" data-anchor="in" id="n-iot"><span class="ic"><svg><use href="#i-sensor"/></svg></span><div class="nt"><b>Sensores en terreno (IoT)</b><em>tiempo real · condiciones</em></div></div>
+        </div>
+      </div>
+
+      <!-- CORE -->
+      <div class="corewrap">
+        <p class="colhead" style="justify-content:center;"><span class="n">02</span> Inteligencia</p>
+        <div class="core" id="core">
+          <span class="ring r1"></span><span class="ring r2"></span><span class="pulse"></span>
+          <canvas class="core-canvas" id="coreCanvas"></canvas>
+          <div class="lbl"><span class="ic"><svg><use href="#i-cpu"/></svg></span><b>Agente de IA</b><em>procesa · decide · automatiza</em></div>
+        </div>
+        <span class="coretag">analiza · razona · actúa</span>
+      </div>
+
+      <!-- OUTPUTS -->
+      <div>
+        <p class="colhead right"><span class="n">03</span> Resultados / Salidas</p>
+        <div class="stack">
+          <div class="node" data-anchor="out" id="n-client"><span class="ic"><svg><use href="#i-chat"/></svg></span><div class="nt"><b>Respuesta a la operación</b><em>reportes · alertas · soporte</em></div></div>
+          <div class="node" data-anchor="out" id="n-sys"><span class="ic"><svg><use href="#i-sync"/></svg></span><div class="nt"><b>Integración con sistemas</b><em>ERP · despacho · dashboards</em></div></div>
+          <div class="node" data-anchor="out" id="n-auto"><span class="ic"><svg><use href="#i-gear"/></svg></span><div class="nt"><b>Automatización de procesos</b><em>tareas sin intervención</em></div></div>
+          <div class="node human" data-anchor="fb" id="n-human"><span class="ic"><svg><use href="#i-usercheck"/></svg></span><div class="nt"><b>Revisión humana</b><em>la IA asiste · el humano corrige y entrena</em></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="fbnote">↺ la IA propone → el humano revisa y corrige → la IA aprende</div>
+  </div>
+
+  <div class="legend">
+    <span><span class="sw"></span> Flujo de datos: entradas → IA → salidas</span>
+    <span><span class="sw gsolid"></span> La IA propone y asiste la revisión</span>
+    <span><span class="sw gold"></span> El humano corrige y la IA aprende</span>
+  </div>
+</div>
+
+<div id="tweaks-root"></div>
+
+<script>
+  // ===== diagram (vanilla) =====
+  const diagram = document.getElementById('diagram');
+  const svg = document.getElementById('edges');
+  const core = document.getElementById('core');
+  const SVGNS = 'http://www.w3.org/2000/svg';
+
+  // ---- Ambiente: full-palette themes ----
+  const THEMES = {
+    desierto:{'--paper':'#FBF7F0','--paper2':'#F4ECDF','--ink':'#1F2A38','--ink-soft':'#6b6258','--gold':'#D9A441','--gold-d':'#C2872B','--brown':'#B07B4F','--blue':'#3D5BC8','--line':'#cdbfa6','--card':'#FFFDF8','--border':'#e0d4bd','--border-soft':'#e7dcc6','--topo':'#caa86f','--bg-glow':'#fffdf8'},
+    atacama:{'--paper':'#F6EADA','--paper2':'#EEDCC4','--ink':'#3A271B','--ink-soft':'#8a6a4f','--gold':'#E0902F','--gold-d':'#B45A22','--brown':'#A3592F','--blue':'#2E726B','--line':'#d9b78d','--card':'#FCF3E6','--border':'#e8d4b6','--border-soft':'#ecdcc2','--topo':'#cf8a4a','--bg-glow':'#fdf5ea'},
+    nocturno:{'--paper':'#131C25','--paper2':'#1E2A36','--ink':'#E9F0F6','--ink-soft':'#9DB1C2','--gold':'#E8B65A','--gold-d':'#C98A2E','--brown':'#D29A6A','--blue':'#7892FF','--line':'#34434F','--card':'#1A2630','--border':'#2D3C49','--border-soft':'#33424F','--topo':'#3C5E72','--bg-glow':'#1b2937'}
+  };
+  function applyTheme(name){
+    const t = THEMES[name] || THEMES.desierto;
+    for(const k in t) document.documentElement.style.setProperty(k, t[k]);
+    if(window.__coreRefresh) window.__coreRefresh();
+  }
+  window.applyTheme = applyTheme;
+
+  // ---- Energía: speed + packet density + pulse/spin ----
+  const ENERGY = {
+    calmado:    {dash:'4.6s', fb:'5.6s', spin1:'46s', spin2:'66s', pulse:'4.8s', pkt:1, pdur:7.5, r:3},
+    equilibrado:{dash:'2.8s', fb:'3.4s', spin1:'26s', spin2:'40s', pulse:'3.0s', pkt:1, pdur:5.2, r:3.4},
+    intenso:    {dash:'1.5s', fb:'1.8s', spin1:'15s', spin2:'24s', pulse:'1.9s', pkt:2, pdur:3.2, r:4.2}
+  };
+  window.__energy = 'equilibrado';
+  function applyEnergy(name){
+    window.__energy = ENERGY[name] ? name : 'equilibrado';
+    const e = ENERGY[window.__energy], s = document.documentElement.style;
+    s.setProperty('--dash-dur', e.dash); s.setProperty('--dash-fb', e.fb);
+    s.setProperty('--spin1', e.spin1); s.setProperty('--spin2', e.spin2);
+    s.setProperty('--pulse-dur', e.pulse);
+  }
+  window.applyEnergy = applyEnergy;
+
+  // ---- Conexión: edge routing ----
+  window.__routing = 'organico';
+
+  function rectRel(el){
+    const c = diagram.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    return {x:r.left-c.left, y:r.top-c.top, w:r.width, h:r.height, cx:r.left-c.left+r.width/2, cy:r.top-c.top+r.height/2};
+  }
+  function pt(el, side){
+    const r = rectRel(el);
+    if(side==='right') return {x:r.x+r.w, y:r.cy};
+    if(side==='left')  return {x:r.x,     y:r.cy};
+    if(side==='top')   return {x:r.cx,    y:r.y};
+    if(side==='bottom')return {x:r.cx,    y:r.y+r.h};
+    return {x:r.cx,y:r.cy};
+  }
+  function route(a,b,horizontal){
+    const r = window.__routing || 'organico';
+    if(r==='recto') return `M ${a.x} ${a.y} L ${b.x} ${b.y}`;
+    if(r==='circuito'){
+      if(horizontal){const mx=(a.x+b.x)/2;return `M ${a.x} ${a.y} L ${mx} ${a.y} L ${mx} ${b.y} L ${b.x} ${b.y}`;}
+      const my=(a.y+b.y)/2;return `M ${a.x} ${a.y} L ${a.x} ${my} L ${b.x} ${my} L ${b.x} ${b.y}`;
+    }
+    return horizontal
+      ? `M ${a.x} ${a.y} C ${a.x+(b.x-a.x)*0.5} ${a.y}, ${b.x-(b.x-a.x)*0.5} ${b.y}, ${b.x} ${b.y}`
+      : `M ${a.x} ${a.y} C ${a.x} ${a.y+(b.y-a.y)*0.5}, ${b.x} ${b.y-(b.y-a.y)*0.5}, ${b.x} ${b.y}`;
+  }
+  function routeFb(hb,cb,horizontal,dipY){
+    const r = window.__routing || 'organico';
+    if(r==='organico') return `M ${hb.x} ${hb.y} C ${hb.x} ${dipY}, ${cb.x} ${dipY}, ${cb.x} ${cb.y}`;
+    return `M ${hb.x} ${hb.y} L ${hb.x} ${dipY} L ${cb.x} ${dipY} L ${cb.x} ${cb.y}`;
+  }
+
+  function mkPath(d, cls){
+    const p = document.createElementNS(SVGNS,'path');
+    p.setAttribute('d', d); p.setAttribute('class', cls);
+    svg.appendChild(p); return p;
+  }
+  function mkPacket(d, dur, gold, begin, r){
+    const c = document.createElementNS(SVGNS,'circle');
+    c.setAttribute('r', r||3.4); c.setAttribute('class','pkt'+(gold?' gold':''));
+    const m = document.createElementNS(SVGNS,'animateMotion');
+    m.setAttribute('dur', dur+'s'); m.setAttribute('repeatCount','indefinite');
+    m.setAttribute('path', d); m.setAttribute('begin', (begin||0)+'s'); m.setAttribute('rotate','auto');
+    c.appendChild(m); svg.appendChild(c); return c;
+  }
+
+  function build(){
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const c = diagram.getBoundingClientRect();
+    svg.setAttribute('viewBox', `0 0 ${c.width} ${c.height}`);
+    const horizontal = c.width > 860;
+    const E = ENERGY[window.__energy] || ENERGY.equilibrado;
+
+    const ins  = [...document.querySelectorAll('[data-anchor="in"]')];
+    const outs = [...document.querySelectorAll('[data-anchor="out"]')];
+    const human = document.getElementById('n-human');
+
+    function emit(d, idx){
+      mkPath(d,'edge base'); mkPath(d,'edge flow');
+      for(let k=0;k<E.pkt;k++){
+        const begin = ((idx*0.7) + k*(E.pdur/E.pkt)) % E.pdur;
+        mkPacket(d, E.pdur, false, begin, E.r);
+      }
+    }
+
+    let i=0;
+    ins.forEach(el=>{ emit(route(pt(el,horizontal?'right':'bottom'), pt(core,horizontal?'left':'top'), horizontal), i); i++; });
+    let j=0;
+    outs.forEach(el=>{ emit(route(pt(core,horizontal?'right':'bottom'), pt(el,horizontal?'left':'top'), horizontal), j); j++; });
+
+    // ---- human review = bidirectional ----
+    const goldD = getComputedStyle(document.documentElement).getPropertyValue('--gold-d').trim() || '#B45A22';
+    const defs = document.createElementNS(SVGNS,'defs');
+    const mk = document.createElementNS(SVGNS,'marker');
+    mk.setAttribute('id','ah'); mk.setAttribute('viewBox','0 0 10 10');
+    mk.setAttribute('refX','7.5'); mk.setAttribute('refY','5');
+    mk.setAttribute('markerWidth','6.5'); mk.setAttribute('markerHeight','6.5'); mk.setAttribute('orient','auto');
+    const mp=document.createElementNS(SVGNS,'path'); mp.setAttribute('d','M0 0 L10 5 L0 10 z'); mp.setAttribute('fill',goldD);
+    mk.appendChild(mp); defs.appendChild(mk); svg.appendChild(defs);
+
+    // forward: the AI proposes work & assists the review (core -> human)
+    const fwd = route(pt(core,horizontal?'right':'bottom'), pt(human,horizontal?'left':'top'), horizontal);
+    mkPath(fwd,'edge fb-base');
+    mkPath(fwd,'edge fb-fwd').setAttribute('marker-end','url(#ah)');
+    mkPacket(fwd, E.pdur+0.6, true, 0, E.r);
+
+    // return: the human corrects & the AI learns from it (human -> core)
+    const hb = pt(human,'bottom'), cb = pt(core,'bottom');
+    const dipY = Math.max(hb.y, cb.y) + (horizontal? 84 : 52);
+    const back = routeFb(hb, cb, horizontal, dipY);
+    mkPath(back,'edge fb-base');
+    mkPath(back,'edge fb-flow').setAttribute('marker-end','url(#ah)');
+    mkPacket(back, E.pdur+1.2, true, 0, E.r);
+  }
+  window.__rebuild = build;
+
+  const ro = new ResizeObserver(()=>build());
+  ro.observe(diagram);
+  window.addEventListener('load', build);
+  window.addEventListener('resize', build);
+  build();
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(build);
+  setTimeout(build, 400);
+
+  // animation toggle
+  const tg = document.getElementById('tgAnim');
+  tg.addEventListener('click', ()=>{
+    const paused = document.body.classList.toggle('paused');
+    tg.classList.toggle('off', paused);
+  });
+</script>
+
+<!-- 3D particle core -->
+<script>
+  (function(){
+    const core = document.getElementById('core');
+    const cv = document.getElementById('coreCanvas');
+    if(!core || !cv) return;
+    const ctx = cv.getContext('2d');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let GOLD = '#E0902F';
+    function hexToRgb(h){h=(h||'').replace('#','').trim();if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h||'E0902F',16);return [(n>>16)&255,(n>>8)&255,n&255];}
+    function refresh(){ const cs=getComputedStyle(document.documentElement); GOLD=(cs.getPropertyValue('--gold').trim())||GOLD; }
+    window.__coreRefresh = refresh; refresh();
+
+    // fibonacci sphere
+    const N=260, P=[];
+    for(let i=0;i<N;i++){ const y=1-(i/(N-1))*2; const r=Math.sqrt(Math.max(0,1-y*y)); const th=i*2.39996323; P.push({x:Math.cos(th)*r, y, z:Math.sin(th)*r}); }
+
+    let rot=0, dpr=Math.min(2, window.devicePixelRatio||1), S=0;
+    function size(){ S=core.clientWidth; cv.width=S*dpr; cv.height=S*dpr; cv.style.width=S+'px'; cv.style.height=S+'px'; ctx.setTransform(dpr,0,0,dpr,0,0); }
+    size(); window.addEventListener('resize', size);
+    if('ResizeObserver' in window){ new ResizeObserver(size).observe(core); }
+
+    const tilt=0.42, cosT=Math.cos(tilt), sinT=Math.sin(tilt);
+    function draw(){
+      if(!S) size();
+      const paused = document.body.classList.contains('paused');
+      if(!paused && !reduce) rot += 0.0045;
+      const cxp=S/2, cyp=S/2, R=S*0.40;
+      ctx.clearRect(0,0,S,S);
+      const [gr,gg,gb]=hexToRgb(GOLD);
+
+      // central energy glow
+      let g=ctx.createRadialGradient(cxp,cyp*0.92,2,cxp,cyp,R*1.25);
+      g.addColorStop(0,`rgba(${gr},${gg},${gb},0.55)`);
+      g.addColorStop(0.45,`rgba(${gr},${gg},${gb},0.14)`);
+      g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cxp,cyp,R*1.3,0,7); ctx.fill();
+
+      // project
+      const cosR=Math.cos(rot), sinR=Math.sin(rot), pr=[];
+      for(const p of P){
+        let x=p.x*cosR - p.z*sinR;
+        let z=p.x*sinR + p.z*cosR;
+        let y=p.y*cosT - z*sinT;
+        z=p.y*sinT + z*cosT;
+        pr.push({sx:cxp+x*R, sy:cyp+y*R, z});
+      }
+      pr.sort((a,b)=>a.z-b.z);
+
+      // connective lines (front hemisphere) — neural / tech feel
+      ctx.lineWidth=0.7;
+      const thr=(S*0.15)*(S*0.15);
+      for(let i=0;i<pr.length;i++){ const a=pr[i]; if(a.z<0.12) continue;
+        for(let j=i+1;j<pr.length;j++){ const b=pr[j]; if(b.z<0.12) continue;
+          const dx=a.sx-b.sx, dy=a.sy-b.sy, d2=dx*dx+dy*dy;
+          if(d2<thr){ const dep=(a.z+b.z)/2; ctx.strokeStyle=`rgba(${gr},${gg},${gb},${0.17*dep})`;
+            ctx.beginPath(); ctx.moveTo(a.sx,a.sy); ctx.lineTo(b.sx,b.sy); ctx.stroke(); }
+        }
+      }
+      // points (depth-shaded)
+      for(const p of pr){ const dep=(p.z+1)/2; const rad=0.7+dep*2.8;
+        ctx.globalAlpha=0.28+dep*0.72; ctx.fillStyle = dep>0.62 ? '#fff6e2' : GOLD;
+        ctx.beginPath(); ctx.arc(p.sx,p.sy,rad,0,7); ctx.fill();
+      }
+      ctx.globalAlpha=1;
+
+      // spherical sheen (upper-left) for 3D volume
+      let sh=ctx.createRadialGradient(cxp-R*0.32,cyp-R*0.42,2,cxp-R*0.32,cyp-R*0.42,R*0.95);
+      sh.addColorStop(0,'rgba(255,240,205,0.16)'); sh.addColorStop(0.6,'rgba(255,240,205,0.04)'); sh.addColorStop(1,'rgba(255,240,205,0)');
+      ctx.fillStyle=sh; ctx.beginPath(); ctx.arc(cxp,cyp,R*1.0,0,7); ctx.fill();
+
+      // seat the label: dim the very center (soft)
+      let v=ctx.createRadialGradient(cxp,cyp,0,cxp,cyp,R*0.62);
+      v.addColorStop(0,'rgba(18,11,3,0.5)'); v.addColorStop(0.72,'rgba(18,11,3,0.22)'); v.addColorStop(1,'rgba(18,11,3,0)');
+      ctx.fillStyle=v; ctx.beginPath(); ctx.arc(cxp,cyp,R*0.64,0,7); ctx.fill();
+    }
+    function loop(){ draw(); requestAnimationFrame(loop); }
+    loop();
+    // direct draws so the orb is visible even where rAF is throttled (captures, bg tabs)
+    window.addEventListener('load', draw);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+    setTimeout(draw,350); setTimeout(draw,900);
+  })();
+</script>
+
+<!-- React + Tweaks panel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "ambiente": "Atacama",
+    "conexion": "Orgánico",
+    "energia": "Calmado"
+  }/*EDITMODE-END*/;
+
+  function FlujoTweaks(){
+    const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+    React.useEffect(()=>{ window.applyTheme && window.applyTheme(t.ambiente.toLowerCase()); }, [t.ambiente]);
+    React.useEffect(()=>{
+      const map = {'Orgánico':'organico','Recto':'recto','Circuito':'circuito'};
+      window.__routing = map[t.conexion] || 'organico';
+      window.__rebuild && window.__rebuild();
+    }, [t.conexion]);
+    React.useEffect(()=>{
+      window.applyEnergy && window.applyEnergy(t.energia.toLowerCase());
+      window.__rebuild && window.__rebuild();
+    }, [t.energia]);
+
+    return (
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Ambiente" />
+        <TweakRadio label="Paleta" value={t.ambiente}
+          options={['Desierto','Atacama','Nocturno']}
+          onChange={(v)=>setTweak('ambiente', v)} />
+        <TweakSection label="Diagrama" />
+        <TweakRadio label="Conexión" value={t.conexion}
+          options={['Orgánico','Recto','Circuito']}
+          onChange={(v)=>setTweak('conexion', v)} />
+        <TweakRadio label="Energía" value={t.energia}
+          options={['Calmado','Equilibrado','Intenso']}
+          onChange={(v)=>setTweak('energia', v)} />
+      </TweaksPanel>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<FlujoTweaks />);
+</script>
+</body>
+</html>
