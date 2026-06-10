@@ -176,31 +176,50 @@
   .mock-bar .live::before{content:"";width:8px;height:8px;border-radius:50%;background:#43c47a;
     box-shadow:0 0 0 0 rgba(67,196,122,.6);animation:livep 2.2s ease-out infinite;}
   @keyframes livep{70%{box-shadow:0 0 0 8px rgba(67,196,122,0);}100%{box-shadow:0 0 0 0 rgba(67,196,122,0);}}
-  .mock-body{display:grid;grid-template-columns:188px 1fr;min-height:330px;}
-  .mock-side{background:var(--paper2);border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:5px;}
-  .mock-side .si{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;
-    color:var(--ink-soft);font-size:13.5px;}
-  .mock-side .si svg{width:17px;height:17px;}
-  .mock-side .si.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 0 rgba(31,42,56,.05);}
-  .mock-main{padding:20px;display:flex;flex-direction:column;gap:16px;}
-  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
-  .kpi{border:1px solid var(--line);border-radius:13px;padding:14px;background:#fff;}
-  .kpi .k-l{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.6px;color:var(--ink-soft);text-transform:uppercase;}
-  .kpi .k-v{font-size:27px;font-weight:700;margin-top:6px;letter-spacing:-.5px;}
-  .kpi .k-d{font-size:12px;color:#2f9e5e;margin-top:2px;font-family:'IBM Plex Mono',monospace;}
+  .mock-body{display:grid;grid-template-columns:178px 1fr;min-height:380px;}
+  .mock-side{background:var(--paper2);border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:3px;}
+  .mock-side .si-label{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.7px;color:var(--ink-soft);text-transform:uppercase;padding:8px 11px 4px;opacity:.6;}
+  .mock-side .si{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:8px;color:var(--ink-soft);font-size:13px;}
+  .mock-side .si svg{width:15px;height:15px;flex:none;}
+  .mock-side .si.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 4px rgba(31,42,56,.08);}
+  .mock-side .si .badge{margin-left:auto;background:var(--gold-d);color:#fff;font-size:9px;font-family:'IBM Plex Mono',monospace;border-radius:10px;padding:1px 6px;font-weight:700;}
+  .mock-side .divider{height:1px;background:var(--line);margin:8px 4px;}
+  .mock-main{padding:18px;display:flex;flex-direction:column;gap:14px;background:#f8f9fb;}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .kpi{border:1px solid var(--line);border-radius:11px;padding:13px 14px;background:#fff;position:relative;overflow:hidden;}
+  .kpi::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(217,164,65,.04) 0%,transparent 60%);pointer-events:none;}
+  .kpi .k-l{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.6px;color:var(--ink-soft);text-transform:uppercase;}
+  .kpi .k-v{font-size:24px;font-weight:700;margin-top:5px;letter-spacing:-.8px;line-height:1;}
+  .kpi .k-d{font-size:11px;color:#2f9e5e;margin-top:4px;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:3px;}
   .kpi .k-d.warn{color:var(--gold-d);}
-  .panel{display:grid;grid-template-columns:1.7fr 1fr;gap:13px;}
-  .chartbox{border:1px solid var(--line);border-radius:13px;padding:14px 14px 6px;background:#fff;}
-  .chartbox .ch-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
-  .chartbox .ch-h b{font-size:13.5px;}
-  .chartbox .ch-h span{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-soft);}
-  .chartbox svg{width:100%;height:118px;display:block;}
-  .feed{border:1px solid var(--line);border-radius:13px;padding:12px;background:#fff;display:flex;flex-direction:column;gap:9px;}
-  .feed .f-h{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.6px;color:var(--ink-soft);text-transform:uppercase;}
-  .feed .f-i{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.35;}
-  .feed .f-i .dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-top:5px;}
+  .kpi .k-d.neu{color:var(--ink-soft);}
+  .kpi .k-spark{position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:.18;}
+  .panel{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;}
+  .chartbox{border:1px solid var(--line);border-radius:11px;padding:14px 14px 8px;background:#fff;}
+  .chartbox .ch-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .chartbox .ch-h b{font-size:13px;font-weight:600;}
+  .chartbox .ch-h .ch-tags{display:flex;gap:8px;align-items:center;}
+  .chartbox .ch-h .ch-tag{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink-soft);background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:2px 7px;}
+  .chartbox .ch-h .ch-tag.act{background:rgba(194,135,43,.1);border-color:rgba(194,135,43,.3);color:var(--gold-d);}
+  .chartbox svg{width:100%;height:110px;display:block;}
+  .ch-legend{display:flex;gap:14px;margin-top:6px;}
+  .ch-legend .cl{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-soft);}
+  .ch-legend .cl i{width:18px;height:2.5px;border-radius:2px;display:block;}
+  .feed{border:1px solid var(--line);border-radius:11px;padding:13px;background:#fff;display:flex;flex-direction:column;gap:0;}
+  .feed .f-h{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.6px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+  .feed .f-h span{background:#eef7f2;color:#2f9e5e;border-radius:5px;padding:1px 6px;font-size:9px;}
+  .feed .f-i{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.4;padding:7px 0;border-bottom:1px solid var(--line);}
+  .feed .f-i:last-child{border-bottom:0;padding-bottom:0;}
+  .feed .f-i .dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-top:4px;}
   .feed .f-i .dot.b{background:var(--blue);}
   .feed .f-i .dot.g{background:#43c47a;}
+  .feed .f-i .f-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink-soft);margin-top:2px;display:block;}
+  .feed .f-i .f-txt{display:flex;flex-direction:column;}
+  .mock-footer{background:#fff;border-top:1px solid var(--line);padding:8px 18px;display:flex;align-items:center;gap:16px;}
+  .mock-footer .mf-item{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-soft);}
+  .mock-footer .mf-dot{width:6px;height:6px;border-radius:50%;background:#43c47a;flex:none;}
+  .mock-footer .mf-sep{flex:1;}
+  .mock-footer .mf-time{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-soft);opacity:.6;}
 
   @media(max-width:720px){
     .mock-body{grid-template-columns:1fr;}
@@ -606,40 +625,109 @@
         </div>
         <div class="mock-body">
           <aside class="mock-side">
+            <div class="si-label">Principal</div>
             <div class="si on"><svg><use href="#i-grid"/></svg><span>Resumen</span></div>
-            <div class="si"><svg><use href="#i-truck"/></svg><span>Flota</span></div>
+            <div class="si"><svg><use href="#i-truck"/></svg><span>Flota</span><span class="badge">12</span></div>
             <div class="si"><svg><use href="#i-sensor"/></svg><span>Sensores</span></div>
-            <div class="si"><svg><use href="#i-layers"/></svg><span>Planificación</span></div>
+            <div class="divider"></div>
+            <div class="si-label">Planificación</div>
+            <div class="si"><svg><use href="#i-layers"/></svg><span>Turnos</span></div>
             <div class="si"><svg><use href="#i-report"/></svg><span>Reportes</span></div>
           </aside>
           <div class="mock-main">
             <div class="kpis">
-              <div class="kpi"><div class="k-l">Disponibilidad flota</div><div class="k-v">94%</div><div class="k-d">▲ +6 pts</div></div>
-              <div class="kpi"><div class="k-l">Sensores activos</div><div class="k-v">142</div><div class="k-d">▲ tiempo real</div></div>
-              <div class="kpi"><div class="k-l">Tareas automatizadas</div><div class="k-v">38</div><div class="k-d warn">hoy</div></div>
+              <div class="kpi">
+                <div class="k-l">Disponibilidad</div>
+                <div class="k-v">94%</div>
+                <div class="k-d">▲ +6 pts</div>
+              </div>
+              <div class="kpi">
+                <div class="k-l">Sensores activos</div>
+                <div class="k-v">142</div>
+                <div class="k-d">▲ tiempo real</div>
+              </div>
+              <div class="kpi">
+                <div class="k-l">Alertas abiertas</div>
+                <div class="k-v">3</div>
+                <div class="k-d warn">▼ −5 vs ayer</div>
+              </div>
+              <div class="kpi">
+                <div class="k-l">Tareas IA hoy</div>
+                <div class="k-v">38</div>
+                <div class="k-d neu">automatizadas</div>
+              </div>
             </div>
             <div class="panel">
               <div class="chartbox">
-                <div class="ch-h"><b>Eficiencia operativa</b><span>últimos 12 turnos</span></div>
-                <svg viewBox="0 0 420 118" preserveAspectRatio="none">
-                  <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#D9A441" stop-opacity=".35"/>
-                    <stop offset="1" stop-color="#D9A441" stop-opacity="0"/>
-                  </linearGradient></defs>
-                  <path d="M0,96 L40,84 L80,88 L120,66 L160,72 L200,52 L240,58 L280,38 L320,44 L360,24 L420,30 L420,118 L0,118 Z" fill="url(#ag)"/>
-                  <polyline points="0,96 40,84 80,88 120,66 160,72 200,52 240,58 280,38 320,44 360,24 420,30" fill="none" stroke="#C2872B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="360" cy="24" r="4" fill="#C2872B"/>
+                <div class="ch-h">
+                  <b>Eficiencia operativa</b>
+                  <div class="ch-tags">
+                    <span class="ch-tag act">12 turnos</span>
+                    <span class="ch-tag">semana</span>
+                    <span class="ch-tag">mes</span>
+                  </div>
+                </div>
+                <svg viewBox="0 0 420 110" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#C2872B" stop-opacity=".22"/>
+                      <stop offset="1" stop-color="#C2872B" stop-opacity="0"/>
+                    </linearGradient>
+                    <linearGradient id="ag2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#3b82f6" stop-opacity=".12"/>
+                      <stop offset="1" stop-color="#3b82f6" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <!-- grid lines -->
+                  <line x1="0" y1="22" x2="420" y2="22" stroke="#e8eaed" stroke-width="1"/>
+                  <line x1="0" y1="55" x2="420" y2="55" stroke="#e8eaed" stroke-width="1"/>
+                  <line x1="0" y1="88" x2="420" y2="88" stroke="#e8eaed" stroke-width="1"/>
+                  <!-- labels -->
+                  <text x="2" y="20" font-family="IBM Plex Mono,monospace" font-size="8" fill="#9aabb8">100%</text>
+                  <text x="2" y="53" font-family="IBM Plex Mono,monospace" font-size="8" fill="#9aabb8">75%</text>
+                  <text x="2" y="86" font-family="IBM Plex Mono,monospace" font-size="8" fill="#9aabb8">50%</text>
+                  <!-- area + line eficiencia -->
+                  <path d="M30,92 L68,80 L106,84 L144,64 L182,70 L220,50 L258,56 L296,36 L334,42 L372,22 L410,28 L410,110 L30,110 Z" fill="url(#ag)"/>
+                  <polyline points="30,92 68,80 106,84 144,64 182,70 220,50 258,56 296,36 334,42 372,22 410,28" fill="none" stroke="#C2872B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- area + line objetivo -->
+                  <path d="M30,70 L68,68 L106,66 L144,64 L182,62 L220,60 L258,58 L296,56 L334,54 L372,52 L410,50 L410,110 L30,110 Z" fill="url(#ag2)"/>
+                  <polyline points="30,70 68,68 106,66 144,64 182,62 220,60 258,58 296,56 334,54 372,52 410,50" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5,3" stroke-linecap="round"/>
+                  <!-- dot último punto -->
+                  <circle cx="410" cy="28" r="4" fill="#C2872B" stroke="#fff" stroke-width="2"/>
                 </svg>
+                <div class="ch-legend">
+                  <div class="cl"><i style="background:#C2872B"></i>Eficiencia real</div>
+                  <div class="cl"><i style="background:#3b82f6;opacity:.7"></i>Objetivo</div>
+                </div>
               </div>
               <div class="feed">
-                <div class="f-h">Agente · actividad</div>
-                <div class="f-i"><span class="dot b"></span>Optimizó ruta de 6 camiones en Rajo Norte.</div>
-                <div class="f-i"><span class="dot g"></span>Alerta de temperatura resuelta — sensor #44.</div>
-                <div class="f-i"><span class="dot"></span>Reporte de turno generado y enviado.</div>
-                <div class="f-i"><span class="dot b"></span>Plan de mañana propuesto · espera revisión.</div>
+                <div class="f-h">Agente · actividad <span>en vivo</span></div>
+                <div class="f-i">
+                  <span class="dot b"></span>
+                  <div class="f-txt">Optimizó ruta de 6 camiones en Rajo Norte.<span class="f-meta">hace 4 min · Flota</span></div>
+                </div>
+                <div class="f-i">
+                  <span class="dot g"></span>
+                  <div class="f-txt">Alerta de temperatura resuelta — sensor #44.<span class="f-meta">hace 18 min · Sensores</span></div>
+                </div>
+                <div class="f-i">
+                  <span class="dot"></span>
+                  <div class="f-txt">Reporte de turno generado y enviado.<span class="f-meta">hace 1 h · Reportes</span></div>
+                </div>
+                <div class="f-i">
+                  <span class="dot b"></span>
+                  <div class="f-txt">Plan de mañana propuesto · espera revisión.<span class="f-meta">hace 2 h · Planificación</span></div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+        <div class="mock-footer">
+          <div class="mf-item"><span class="mf-dot"></span>Sistema operativo</div>
+          <div class="mf-item">Agentes activos: 4</div>
+          <div class="mf-item">Última sync: hace 12s</div>
+          <div class="mf-sep"></div>
+          <div class="mf-time">v2.4.1 · Turno N · 06:42</div>
         </div>
       </div>
       <p class="mock-cap">Ejemplo de una solución que diseñamos e implementamos para una operación minera.</p>
